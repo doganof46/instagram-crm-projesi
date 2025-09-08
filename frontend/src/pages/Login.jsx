@@ -1,8 +1,7 @@
-import React, 'useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-// YENİ VE DOĞRU ADRES TANIMI
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 function Login() {
@@ -13,7 +12,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_URL}/login`, { // Değişti
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
