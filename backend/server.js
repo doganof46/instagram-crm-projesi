@@ -5,13 +5,27 @@ import pool, { setupDatabase } from './database.js';
 const app = express();
 const port = process.env.PORT || 5000;
 
-// --- YENİ VE DOĞRU CORS AYARI ---
-// Vercel'in bize verdiği tam adresi buraya yazıyoruz
-const frontendURL = 'https://instagram-crm-projesi-git-main-hocas-projects.vercel.app';
-app.use(cors({ origin: frontendURL }));
+// --- YENİ VE PROFESYONEL CORS AYARI ---
+// Güvendiğimiz adreslerin bir listesini oluşturuyoruz
+const allowedOrigins = [
+  'https://instagram-crm-projesi.vercel.app', // Temiz, ana adres
+  'https://instagram-crm-projesi-git-main-hocas-projects.vercel.app' // Vercel'in oluşturduğu önizleme adresi
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Eğer gelen istek bu adreslerden biriyse veya tanımsızsa (örn: mobil uygulama gibi durumlar için) izin ver
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Bu sitenin erisimi engellendi (CORS).'));
+    }
+  }
+}));
 
 app.use(express.json());
 
+// Sunucu başlarken veritabanı tablosunu kontrol et/oluştur
 setupDatabase();
 
 // --- API ENDPOINTS ---
@@ -61,7 +75,7 @@ app.patch('/orders/:id', async (req, res) => {
     if (fieldEntries.length === 0) {
         return res.status(400).json({ message: 'Güncellenecek alan bulunamadı.' });
     }
-
+    
     const setClauses = fieldEntries.map(([key], index) => `${key} = $${index + 1}`).join(', ');
     const values = fieldEntries.map(([, value]) => value);
 
