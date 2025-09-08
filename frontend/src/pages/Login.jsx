@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-function Login() {
+// onLoginSuccess prop'unu App.jsx'ten alacak
+function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,11 +18,11 @@ function Login() {
       });
 
       const data = await response.json();
-      if (data.success) {
-        localStorage.setItem('isLoggedIn', 'true');
-        navigate('/dashboard');
+      if (response.ok && data.success) {
+        // Başarılı olduğunda sadece App.jsx'e haber veriyoruz
+        onLoginSuccess();
       } else {
-        toast.error(data.message);
+        toast.error(data.message || 'Bir hata oluştu.');
       }
     } catch (error) {
       toast.error("Sunucuya bağlanırken bir hata oluştu.");
