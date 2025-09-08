@@ -1,7 +1,5 @@
 import pg from 'pg';
 
-// Veritabanı bağlantı havuzu oluşturuluyor.
-// DATABASE_URL bilgisini Render'daki ortam değişkenlerinden alacak.
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -9,7 +7,6 @@ const pool = new pg.Pool({
   },
 });
 
-// Veritabanı tablosunu oluşturan veya kontrol eden fonksiyon
 export async function setupDatabase() {
   const client = await pool.connect();
   try {
@@ -32,5 +29,4 @@ export async function setupDatabase() {
   }
 }
 
-// Diğer dosyalarda sorgu yapmak için havuzu dışa aktarıyoruz.
 export default pool;

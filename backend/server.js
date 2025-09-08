@@ -5,11 +5,9 @@ import pool, { setupDatabase } from './database.js';
 const app = express();
 const port = process.env.PORT || 5000;
 
-// CORS ayarı (Daha sonra frontend adresinizi buraya yazacaksınız)
-app.use(cors());
+app.use(cors()); // Şimdilik herkese açık, sonra düzenleyeceğiz
 app.use(express.json());
 
-// Sunucu başlarken veritabanı tablosunu kontrol et/oluştur
 setupDatabase();
 
 // --- API ENDPOINTS ---
@@ -23,7 +21,6 @@ app.post('/login', (req, res) => {
     }
 });
 
-// GET /orders: Tüm siparişleri çek
 app.get('/orders', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM orders ORDER BY id DESC');
@@ -34,7 +31,6 @@ app.get('/orders', async (req, res) => {
   }
 });
 
-// POST /orders: Yeni sipariş ekle
 app.post('/orders', async (req, res) => {
   const { customer, item } = req.body;
   if (!customer || !item) {
@@ -52,7 +48,6 @@ app.post('/orders', async (req, res) => {
   }
 });
 
-// PATCH /orders/:id: Sipariş güncelle
 app.patch('/orders/:id', async (req, res) => {
     const { id } = req.params;
     const fields = req.body;
@@ -75,7 +70,12 @@ app.patch('/orders/:id', async (req, res) => {
     }
 });
 
-// ... (Diğer endpoint'ler)
+app.post('/orders/:id/send-dm', (req, res) => {
+    const { id } = req.params;
+    const { message } = req.body;
+    console.log(`Sipariş ID ${id} için DM gönderiliyor: "${message}"`);
+    res.json({ success: true, message: `DM, sipariş ${id} için başarıyla gönderildi (simülasyon).` });
+});
 
 app.listen(port, () => {
   console.log(`Sunucu ${port} portunda çalışıyor`);
