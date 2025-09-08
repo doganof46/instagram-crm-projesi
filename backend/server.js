@@ -5,13 +5,12 @@ import pool, { setupDatabase } from './database.js';
 const app = express();
 const port = process.env.PORT || 5000;
 
-// ...
-// Sadece bizim Vercel sitemizden gelen isteklere izin ver
-const frontendURL = 'https://instagram-crm-projesi.vercel.app';
+// --- YENİ VE DOĞRU CORS AYARI ---
+// Vercel'in bize verdiği tam adresi buraya yazıyoruz
+const frontendURL = 'https://instagram-crm-projesi-git-main-hocas-projects.vercel.app';
 app.use(cors({ origin: frontendURL }));
 
 app.use(express.json());
-// ...
 
 setupDatabase();
 
