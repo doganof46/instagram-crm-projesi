@@ -5,8 +5,13 @@ import pool, { setupDatabase } from './database.js';
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors()); // Şimdilik herkese açık, sonra düzenleyeceğiz
+// ...
+// Sadece bizim Vercel sitemizden gelen isteklere izin ver
+const frontendURL = 'https://instagram-crm-projesi.vercel.app';
+app.use(cors({ origin: frontendURL }));
+
 app.use(express.json());
+// ...
 
 setupDatabase();
 
