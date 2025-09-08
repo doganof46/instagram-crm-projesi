@@ -6,22 +6,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
-// PrivateRoute artık isLoggedIn durumunu prop olarak alacak
+// PrivateRoute'u App.jsx içinde tanımlamak daha stabil olabilir
 const PrivateRoute = ({ isLoggedIn, children }) => {
-  return isLoggedIn ? children : <Navigate to="/" />;
+  if (!isLoggedIn) {
+    // Eğer kullanıcı giriş yapmamışsa, login sayfasına yönlendir
+    return <Navigate to="/" replace />;
+  }
+  return children;
 };
 
 function App() {
-  // Giriş durumunu burada state olarak tutuyoruz
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Sayfa ilk yüklendiğinde localStorage'ı kontrol et
-  useEffect(() => {
-    const loggedInStatus = localStorage.getItem('isLoggedIn') === 'true';
-    if (loggedInStatus) {
-      setIsLoggedIn(true);
-    }
-  }, []);
+  // State'in başlangıç değerini localStorage'dan okuyarak belirliyoruz
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('isLoggedIn') === 'true';
+  });
 
   const handleLoginSuccess = () => {
     localStorage.setItem('isLoggedIn', 'true');
@@ -44,10 +42,9 @@ function App() {
       />
       
       <Routes>
-        {/* Eğer zaten giriş yapılmışsa, anasayfa yerine doğrudan dashboard'a yönlendir */}
         <Route 
           path="/" 
-          element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={handleLoginSuccess} />} 
+          element={!isLoggedIn ? <Login onLoginSuccess={handleLoginSuccess} /> : <Navigate to="/dashboard" replace />} 
         />
         <Route
           path="/dashboard"

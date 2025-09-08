@@ -3,7 +3,6 @@ import { toast } from 'react-toastify';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-// onLoginSuccess prop'unu App.jsx'ten alacak
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -18,14 +17,16 @@ function Login({ onLoginSuccess }) {
       });
 
       const data = await response.json();
+
       if (response.ok && data.success) {
-        // Başarılı olduğunda sadece App.jsx'e haber veriyoruz
         onLoginSuccess();
       } else {
-        toast.error(data.message || 'Bir hata oluştu.');
+        // Backend'den gelen hata mesajını göster, yoksa genel bir hata ver
+        toast.error(data.message || 'Giriş işlemi başarısız oldu.');
       }
     } catch (error) {
-      toast.error("Sunucuya bağlanırken bir hata oluştu.");
+      toast.error("Sunucuya bağlanılamadı veya bir ağ hatası oluştu.");
+      console.error("Login error:", error);
     }
   };
 
